@@ -4,7 +4,7 @@ public enum RequestStatusEnum {
 
     OK(200, "成功"),
 
-    ERROR(201, "失败"),
+    ERROR(201, "参数错误"),
 
     LOGINERROR(202, "用户名或密码错误"),
 

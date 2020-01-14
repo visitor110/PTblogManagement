@@ -1,5 +1,6 @@
 package com.pt.bloglib.config;
 
+import com.pt.bloglib.security.utils.JwtUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -34,6 +35,7 @@ public class CorsConfig extends WebMvcConfigurationSupport {
                 // 设置允许跨域请求的域名
                 .allowedOrigins("*")
                 // 是否允许证书 不再默认开启
+                .exposedHeaders(JwtUtil.TOKEN_HEADER)
                 .allowCredentials(true)
                 // 设置允许的方法
                 .allowedMethods("*")
@@ -41,5 +43,6 @@ public class CorsConfig extends WebMvcConfigurationSupport {
                 .maxAge(3600);
         super.addCorsMappings(registry);
     }
+
 
 }

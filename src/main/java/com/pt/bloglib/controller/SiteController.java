@@ -19,7 +19,7 @@ public class SiteController {
     @ApiOperation(value = "site introduction")
     @RequestMapping("/introduction")
     @ResponseBody
-    public String test(){
+    public String test() {
         return siteIntroductionConfig.getIntroduction();
     }
 

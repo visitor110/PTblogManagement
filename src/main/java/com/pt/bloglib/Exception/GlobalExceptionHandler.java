@@ -5,6 +5,7 @@ import com.pt.bloglib.enums.RequestStatusEnum;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -16,6 +17,15 @@ public class GlobalExceptionHandler {
     public ExceptionMsg httpRequestMethodNotSupportedExceptionHandler(Exception e) {
         e.printStackTrace();
         return ExceptionMsg.createExceptionMsg(RequestStatusEnum.ERROR.getState(), RequestStatusEnum.ERROR.getMessage());
+    }
+
+    /**
+     * 404 没找到资源
+     */
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ExceptionMsg noHandlerFoundExceptionHander(Exception e) {
+        e.printStackTrace();
+        return ExceptionMsg.createExceptionMsg(RequestStatusEnum.NOTFOUND.getState(), RequestStatusEnum.NOTFOUND.getMessage());
     }
 
     /**

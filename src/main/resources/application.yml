@@ -1,5 +1,6 @@
 server:
   port: 8090
+
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/blog?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
@@ -20,12 +21,27 @@ spring:
   resources:
     add-mappings: false
 
+jwt:
+  secret: ptSecret
+  # 60 * 60
+  expiration: 3600
+  # 60 * 60 * 24 * 7L
+  expiration_remember: 604800
+  token_prefix: "Bearer "
+  token_header: Authorization
+  token_type: JWT
+  role_claims: roles
+
 mybatis:
   ###数据库模型对象
-  type-aliases-package: com.pt.bloglib.dao.pojo
+  type-aliases-package: com.pt.bloglib.dao.entity
   mapper-locations: mapper/*.xml
 
-site:
-  introduction: "site testing"
+
+###生产坏境设为true，开启swagger-ui
 swagger:
   enabled: true
+
+###以下为自定义变量
+site:
+  introduction: "site testing"

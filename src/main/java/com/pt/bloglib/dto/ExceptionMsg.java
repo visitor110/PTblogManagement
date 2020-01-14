@@ -6,8 +6,10 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.ToString;
 
+/**
+ * 封装一些Exception
+ */
 @ApiModel("响应实体")
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @ToString

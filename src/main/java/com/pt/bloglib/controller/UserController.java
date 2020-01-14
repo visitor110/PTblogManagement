@@ -1,0 +1,60 @@
+package com.pt.bloglib.controller;
+
+import com.pt.bloglib.dao.entity.User;
+import com.pt.bloglib.dto.Result;
+import com.pt.bloglib.enums.RequestStatusEnum;
+import com.pt.bloglib.security.entity.LoginUser;
+import com.pt.bloglib.service.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@Api
+@RequestMapping(value = "/user")
+public class UserController {
+
+    private UserService userService;
+
+
+    @ApiOperation(value = "用户登录")
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @CrossOrigin
+    @ResponseBody
+    public Result doLogin(LoginUser userData) {
+        System.out.println("doLogin\t" + userData.toString());
+        User user = null;
+        try {
+            user = userService.login(userData.getUsername(), userData.getPassword());
+            System.out.println("login result:\t" + user.toString());
+        } catch (NullPointerException e) {
+            return new Result(RequestStatusEnum.LOGINERROR.getState(),
+                    "登陆失败", e);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new Result(RequestStatusEnum.OK.getState(), "登陆成功", null);
+    }
+
+    @ApiOperation(value = "用户注册")
+    @RequestMapping(value = "/registe", method = RequestMethod.POST)
+    @CrossOrigin
+    @ResponseBody
+    public Result doRegiste(User userData) {
+        System.out.println("doRegiste\t" + userData.toString());
+        try {
+            userService.registe(userData);
+
+        } catch (Exception e) {
+            return new Result(RequestStatusEnum.ERROR.getState(), "注册失败", e);
+        }
+        return new Result(RequestStatusEnum.OK.getState(), "注册成功", null);
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+}
