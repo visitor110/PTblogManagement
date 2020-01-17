@@ -34,6 +34,13 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                                     FilterChain chain) throws IOException, ServletException {
 
         String authorization = request.getHeader(JwtUtil.TOKEN_HEADER);
+
+        //跨域問題
+//        response.setHeader("Access-Control-Allow-Origin", "*");
+//        response.setHeader("Access-Control-Allow-Credentials", "true");
+//        response.setHeader("Access-Control-Allow-Methods", "POST, GET, PATCH, DELETE, PUT");
+//        response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
         // 如果请求头中没有token信息则直接放行了
         if (authorization == null || !authorization.startsWith(JwtUtil.TOKEN_PREFIX)) {
             chain.doFilter(request, response);

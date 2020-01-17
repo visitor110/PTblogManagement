@@ -1,9 +1,10 @@
 package com.pt.bloglib.controller;
 
 import com.pt.bloglib.dao.entity.User;
+import com.pt.bloglib.dao.pojo.RegisterUser;
 import com.pt.bloglib.dto.Result;
 import com.pt.bloglib.enums.RequestStatusEnum;
-import com.pt.bloglib.security.entity.LoginUser;
+import com.pt.bloglib.dao.pojo.LoginUser;
 import com.pt.bloglib.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private UserService userService;
-
 
     @ApiOperation(value = "用户登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -38,13 +38,13 @@ public class UserController {
     }
 
     @ApiOperation(value = "用户注册")
-    @RequestMapping(value = "/registe", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     @CrossOrigin
     @ResponseBody
-    public Result doRegiste(User userData) {
-        System.out.println("doRegiste\t" + userData.toString());
+    public Result doRegister(RegisterUser userData) {
+        System.out.println("doRegister\t" + userData.toString());
         try {
-            userService.registe(userData);
+            userService.register(userData);
 
         } catch (Exception e) {
             return new Result(RequestStatusEnum.ERROR.getState(), "注册失败", e);

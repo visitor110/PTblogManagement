@@ -1,7 +1,11 @@
 package com.pt.bloglib.config;
 
 import com.pt.bloglib.security.utils.JwtUtil;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -35,14 +39,29 @@ public class CorsConfig extends WebMvcConfigurationSupport {
                 // 设置允许跨域请求的域名
                 .allowedOrigins("*")
                 // 是否允许证书 不再默认开启
-                .exposedHeaders(JwtUtil.TOKEN_HEADER)
                 .allowCredentials(true)
                 // 设置允许的方法
                 .allowedMethods("*")
                 // 跨域允许时间
                 .maxAge(3600);
+//                .exposedHeaders(JwtUtil.TOKEN_HEADER);
         super.addCorsMappings(registry);
     }
 
+    private CorsConfiguration buildConfig() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.addAllowedOrigin("*");
+        corsConfiguration.addAllowedHeader("*");
+        corsConfiguration.addAllowedMethod("*");
+        return corsConfiguration;
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        // 配置所有请求
+        source.registerCorsConfiguration("/**", buildConfig());
+        return new CorsFilter(source);
+    }
 
 }

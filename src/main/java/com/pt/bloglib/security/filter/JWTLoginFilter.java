@@ -2,9 +2,8 @@ package com.pt.bloglib.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pt.bloglib.security.entity.JwtUser;
-import com.pt.bloglib.security.entity.LoginUser;
+import com.pt.bloglib.dao.pojo.LoginUser;
 import com.pt.bloglib.security.utils.JwtUtil;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,6 +31,9 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private LoginUser loginUser;
+
     public JWTLoginFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
         // 设置URL，以确定是否需要身份验证
@@ -42,20 +44,19 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse res)
             throws AuthenticationException {
-        LoginUser loginUser = new LoginUser();
+        ObjectMapper objectMapper = new ObjectMapper();
         try {
             // 从输入流中获取到登录的信息
-            loginUser.setUsername(request.getParameter("username"));
-            loginUser.setPassword(request.getParameter("password"));
-            loginUser.setRememberMe(Boolean.getBoolean(request.getParameter("rememberMe")));
-            rememberMe.set(loginUser.getRememberMe());
+           loginUser = objectMapper.readValue(request.getInputStream(), LoginUser.class);
+            rememberMe.set(loginUser.getRemember());
+            System.out.println("loginUser\t" + loginUser);
             // 这部分和attemptAuthentication方法中的源码是一样的，
             // 只不过由于这个方法源码的是把用户名和密码这些参数的名字是死的，所以我们重写了一下
             UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
                     loginUser.getUsername(), loginUser.getPassword());
             return authenticationManager.authenticate(authRequest);
         } catch (Exception e) {
-            logger.error("resuest 中提取 LoginUser 失败\t", e);
+            logger.error("request 中提取 LoginUser 失败\t", e);
             e.printStackTrace();
             return null;
         }

@@ -2,10 +2,10 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for tb_users
+-- Table structure for tb_user
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_users`;
-CREATE TABLE `tb_users`  (
+DROP TABLE IF EXISTS `tb_user`;
+CREATE TABLE `tb_user`  (
   `user_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `user_name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名',
   `user_password` varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户密码',
@@ -15,7 +15,43 @@ CREATE TABLE `tb_users`  (
   PRIMARY KEY (`user_id`) USING BTREE,
   INDEX `user_name`(`user_name`) USING BTREE,
   INDEX `user_nickname`(`user_nickname`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for tb_role
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_role`;
+CREATE TABLE `tb_role`  (
+  `role_id` int(10) NOT NULL AUTO_INCREMENT COMMENT '角色ID',
+  `role_name` varchar(30) NOT NULL COMMENT '角色名',
+  PRIMARY KEY (`role_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for tb_user_role
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_user_role`;
+CREATE TABLE `tb_user_role` (
+  `user_role_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` bigint(20) NOT NULL COMMENT '用户id',
+  `role_id` int(10) NOT NULL COMMENT '角色id',
+  PRIMARY KEY (`user_role_id`),
+  CONSTRAINT fk_user_id  FOREIGN  KEY(user_id) REFERENCES tb_user(user_id),
+   CONSTRAINT fk_role_id  FOREIGN  KEY(role_id) REFERENCES tb_role(role_id)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for tb_login
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_login`;
+CREATE TABLE `tb_login` (
+  `login_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `login_time` datetime NOT NULL COMMENT '登录时间',
+  `login_ip` varchar(16) NOT NULL COMMENT '登录ip',
+  `user_id` bigint(20) NOT NULL COMMENT '用户ID',
+   PRIMARY KEY (`login_id`),
+   CONSTRAINT fk_user_id  FOREIGN  KEY(user_id) REFERENCES tb_user(user_id)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Table structure for tb_articles
@@ -33,6 +69,8 @@ CREATE TABLE `tb_articles`  (
   INDEX `user_id`(`user_id`) USING BTREE,
   CONSTRAINT `fk_articles_user` FOREIGN KEY (`user_id`) REFERENCES `tb_users` (`user_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+
 
 -- ----------------------------
 -- Table structure for tb_comments

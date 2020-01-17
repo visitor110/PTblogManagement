@@ -2,6 +2,7 @@ package com.pt.bloglib.service.Impl;
 
 import com.pt.bloglib.dao.UserDao;
 import com.pt.bloglib.dao.entity.User;
+import com.pt.bloglib.dao.pojo.RegisterUser;
 import com.pt.bloglib.security.utils.UserPasswordEncoder;
 import com.pt.bloglib.service.UserService;
 import com.pt.bloglib.utils.FormatUtil;
@@ -13,6 +14,13 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
+
+    private User user;
+
+    @Bean
+    public User getUser() {
+        return new User();
+    }
 
     @Bean
     public UserPasswordEncoder getEncoder() {
@@ -47,8 +55,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void registe(User user) {
-        user.setPassword(encoder.encode(user.getPassword()));
+    public void register(RegisterUser registerUser) {
+        user.setUsername(registerUser.getUsername());
+        user.setPassword(encoder.encode(registerUser.getPassword()));
+        user.setState(2);
+        user.setMail(registerUser.getMail());
+        System.out.println("user:\t" + user);
         userDao.addUser(user);
     }
 
@@ -60,6 +72,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public void setEncoder(UserPasswordEncoder encoder) {
         this.encoder = encoder;
+    }
+
+    @Autowired
+    public void setUser(User user){
+        this.user = user;
     }
 
 

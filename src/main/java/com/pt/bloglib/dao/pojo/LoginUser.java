@@ -1,4 +1,4 @@
-package com.pt.bloglib.security.entity;
+package com.pt.bloglib.dao.pojo;
 
 import lombok.Data;
 
@@ -6,5 +6,5 @@ import lombok.Data;
 public class LoginUser {
     private String username;
     private String password;
-    private Boolean rememberMe;
+    private Boolean remember;
 }
