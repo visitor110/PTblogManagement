@@ -1,5 +1,6 @@
 package com.pt.bloglib.service.Impl;
 
+import com.pt.bloglib.Exception.UserExistsException;
 import com.pt.bloglib.dao.UserDao;
 import com.pt.bloglib.dao.entity.User;
 import com.pt.bloglib.dao.pojo.RegisterUser;
@@ -45,18 +46,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findUserByName(String username) {
         User user = userDao.findUserByName(username);
-        if (!FormatUtil.checkClassIsNull(user)) {
-            return user;
-        } else {
-            System.out.println("user no found");
-            return null;
-        }
-
+        return user;
     }
 
     @Override
-    public void register(RegisterUser registerUser) {
+    public void register(RegisterUser registerUser) throws UserExistsException {
         user.setUsername(registerUser.getUsername());
+        User foundUser = userDao.findUserByName(user.getUsername());
+        if (!FormatUtil.checkClassIsNull(foundUser))
+            throw new UserExistsException("用户名已存在");
         user.setPassword(encoder.encode(registerUser.getPassword()));
         user.setState(2);
         user.setMail(registerUser.getMail());
@@ -75,7 +73,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Autowired
-    public void setUser(User user){
+    public void setUser(User user) {
         this.user = user;
     }
 

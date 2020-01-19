@@ -23,12 +23,13 @@ public class JWTAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         Result res = null;
         response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json; charset=utf-8");
         if (exception instanceof InsufficientAuthenticationException) {
             res = new Result(RequestCodeEnum.ACCESSERROR.getState(), "权限错误", exception);
         } else {
             res = new Result(RequestCodeEnum.ACCESSERROR.getState(), "未知权限错误", exception);
         }
-        response.setContentType("application/json; charset=utf-8");
+
         PrintWriter out = null;
         try {
             out = response.getWriter();

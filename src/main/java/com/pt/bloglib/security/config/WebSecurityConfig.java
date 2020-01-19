@@ -28,12 +28,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
 
-    /**
-     * 加密方法
-     *
-     * @return
-     */
-    @Bean
     public PasswordEncoder passwordEncoder() {
         return new UserPasswordEncoder();
     }

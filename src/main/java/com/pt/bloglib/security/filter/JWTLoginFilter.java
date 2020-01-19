@@ -1,8 +1,11 @@
 package com.pt.bloglib.security.filter;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pt.bloglib.security.entity.JwtUser;
 import com.pt.bloglib.dao.pojo.LoginUser;
+import com.pt.bloglib.dto.Result;
+import com.pt.bloglib.enums.RequestCodeEnum;
+import com.pt.bloglib.security.entity.JwtUser;
 import com.pt.bloglib.security.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,12 +45,12 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     // 接收并解析用户凭证
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse res)
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             // 从输入流中获取到登录的信息
-           loginUser = objectMapper.readValue(request.getInputStream(), LoginUser.class);
+            loginUser = objectMapper.readValue(request.getInputStream(), LoginUser.class);
             rememberMe.set(loginUser.getRemember());
             System.out.println("loginUser\t" + loginUser);
             // 这部分和attemptAuthentication方法中的源码是一样的，
@@ -58,31 +61,14 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
         } catch (Exception e) {
             logger.error("request 中提取 LoginUser 失败\t", e);
             e.printStackTrace();
+            Result result = new Result(RequestCodeEnum.ERROR.getState(), "用户不存在", e);
+            try {
+                response = addResultToResponse(response, result);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
             return null;
         }
-
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        try {
-//            // 从输入流中获取到登录的信息
-//            LoginUser loginUser = objectMapper.readValue(request.getInputStream(), LoginUser.class);
-//            rememberMe.set(loginUser.getRememberMe());
-//            // 这部分和attemptAuthentication方法中的源码是一样的，
-//            // 只不过由于这个方法源码的是把用户名和密码这些参数的名字是死的，所以我们重写了一下
-//            UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
-//                    loginUser.getUsername(), loginUser.getPassword());
-//            return authenticationManager.authenticate(authRequest);
-//        } catch (IOException e) {
-//            logger.error("resuest 中提取 LoginUser 失败\t", e);
-//            e.printStackTrace();
-//            return null;
-//        }
-
-//        User user = new User();
-//        user.setUsername(req.getParameter("username").trim());
-//        user.setPassword(req.getParameter("password"));
-//        return authenticationManager
-//                .authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-//
     }
 
     /**
@@ -92,7 +78,7 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request,
                                             HttpServletResponse response,
                                             FilterChain chain,
-                                            Authentication authentication) {
+                                            Authentication authentication) throws IOException {
 
         JwtUser jwtUser = (JwtUser) authentication.getPrincipal();
         List<String> roles = jwtUser.getAuthorities()
@@ -103,11 +89,27 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
         String token = JwtUtil.createToken(jwtUser.getUsername(), roles, rememberMe.get());
         // Http Response Header 中返回 Token
         response.setHeader(JwtUtil.TOKEN_HEADER, token);
+        Result result = new Result(RequestCodeEnum.OK.getState(), "登陆成功", jwtUser);
+        response = addResultToResponse(response, result);
     }
 
+    /**
+     * 验证失败
+     */
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException authenticationException) throws IOException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authenticationException.getMessage());
+        Result result = new Result(RequestCodeEnum.ERROR.getState(), "登陆失败", authenticationException);
+        response = addResultToResponse(response, result);
+    }
+
+    private HttpServletResponse addResultToResponse(HttpServletResponse response, Result result) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json; charset=utf-8");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", result);
+        response.getWriter().println(jsonObject.toString());
+        response.getWriter().flush();
+        return response;
     }
 
 }
