@@ -53,8 +53,6 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
             loginUser = objectMapper.readValue(request.getInputStream(), LoginUser.class);
             rememberMe.set(loginUser.getRemember());
             System.out.println("loginUser\t" + loginUser);
-            // 这部分和attemptAuthentication方法中的源码是一样的，
-            // 只不过由于这个方法源码的是把用户名和密码这些参数的名字是死的，所以我们重写了一下
             UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
                     loginUser.getUsername(), loginUser.getPassword());
             return authenticationManager.authenticate(authRequest);
@@ -89,7 +87,8 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
         String token = JwtUtil.createToken(jwtUser.getUsername(), roles, rememberMe.get());
         // Http Response Header 中返回 Token
         response.setHeader(JwtUtil.TOKEN_HEADER, token);
-        Result result = new Result(RequestCodeEnum.OK.getState(), "登陆成功", jwtUser);
+        System.out.println(jwtUser);
+        Result result = new Result(RequestCodeEnum.OK.getState(), "登陆成功", jwtUser.getId());
         response = addResultToResponse(response, result);
     }
 

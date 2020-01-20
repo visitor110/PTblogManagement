@@ -19,11 +19,6 @@ public class UserServiceImpl implements UserService {
     private User user;
 
     @Bean
-    public User getUser() {
-        return new User();
-    }
-
-    @Bean
     public UserPasswordEncoder getEncoder() {
         return new UserPasswordEncoder();
     }
@@ -76,6 +71,4 @@ public class UserServiceImpl implements UserService {
     public void setUser(User user) {
         this.user = user;
     }
-
-
 }

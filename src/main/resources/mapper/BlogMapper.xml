@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pt.bloglib.dao.BlogDao">
+    <resultMap id="Blog" type="Blog">
+        <id property="id" column="blog_id" />
+        <result property="title" column="blog_title"/>
+        <result property="content" column="blog_body"/>
+        <result property="commentNum" column="blog_discussCount"/>
+        <result property="watchedNum" column="blog_blogViews"/>
+        <result property="createDate" column="blog_time"/>
+        <result property="state" column="blog_state"/>
+        <result property="userId" column="user_id"/>
+    </resultMap>
+
+    <insert id="saveBlog" parameterType="Blog">
+        INSERT INTO blog VALUES (null,#{title},#{content},#{commentNum},#{watchedNum},
+        now(),#{state},#{userId})
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+
+</mapper>

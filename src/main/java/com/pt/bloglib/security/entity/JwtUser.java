@@ -42,6 +42,8 @@ public class JwtUser implements UserDetails {
         return username;
     }
 
+    public Integer getId(){return id;}
+
     public boolean isAccountNonExpired() {
         return true;
     }
