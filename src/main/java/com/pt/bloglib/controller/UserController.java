@@ -1,6 +1,7 @@
 package com.pt.bloglib.controller;
 
 import com.pt.bloglib.Exception.BlogIsNullException;
+import com.pt.bloglib.Exception.BlogSaveException;
 import com.pt.bloglib.Exception.UserExistsException;
 import com.pt.bloglib.dao.entity.User;
 import com.pt.bloglib.dao.pojo.ReceiveBlog;
@@ -53,7 +54,6 @@ public class UserController {
         if (FormatUtil.checkClassIsNull(userData)) {
             return new Result(RequestCodeEnum.ERROR.getState(), "信息不全", "userData is null");
         }
-
         try {
             userService.register(userData);
         } catch (UserExistsException e) {
@@ -72,6 +72,8 @@ public class UserController {
         try{
             blogService.saveBlog(receiveBlog);
         }catch (BlogIsNullException e){
+            return new Result(RequestCodeEnum.ERROR.getState(), e.getMessage(), e);
+        } catch (BlogSaveException e) {
             return new Result(RequestCodeEnum.ERROR.getState(), e.getMessage(), e);
         }
         return new Result(RequestCodeEnum.OK.getState(), "发表成功", null);

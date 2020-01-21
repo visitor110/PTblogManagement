@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
      * 404 没找到资源
      */
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ExceptionMsg noHandlerFoundExceptionHander(Exception e) {
+    public ExceptionMsg noHandlerFoundExceptionHandler(Exception e) {
         e.printStackTrace();
         return ExceptionMsg.createExceptionMsg(RequestStatusEnum.NOTFOUND.getState(), RequestStatusEnum.NOTFOUND.getMessage());
     }
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
      * 其他方式
      */
     @ExceptionHandler(Exception.class)
-    public ExceptionMsg exceptionHander(Exception e) {
+    public ExceptionMsg exceptionHandler(Exception e) {
         e.printStackTrace();
         return ExceptionMsg.createExceptionMsg(RequestStatusEnum.SERVICEERROR.getState(), RequestStatusEnum.SERVICEERROR.getMessage());
     }

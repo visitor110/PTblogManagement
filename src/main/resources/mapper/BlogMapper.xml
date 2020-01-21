@@ -23,5 +23,10 @@
         </selectKey>
     </insert>
 
+    <select id="selectBlogs" resultMap="Blog">
+        SELECT blog_id,blog_title,blog_body,blog_discussCount,
+                blog_blogViews,blog_time,blog_state,user_id
+        FROM blog
+    </select>
 
 </mapper>
