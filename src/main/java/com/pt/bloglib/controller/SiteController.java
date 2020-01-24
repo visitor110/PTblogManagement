@@ -33,9 +33,11 @@ public class SiteController {
     @ApiOperation(value = "主页加载博客")
     @RequestMapping("/blogList")
     @ResponseBody
-    public Result getBlogList() {
+    public Result getBlogList(Integer pageIndex,Integer blogsPerPage) {
+        System.out.println("pageIndex\t" + pageIndex);
+        System.out.println("blogsPerPage\t" + blogsPerPage);
         try {
-            List<Blog> lists = blogService.loadBlogs();
+            List<Blog> lists = blogService.loadBlogsByPage(pageIndex,blogsPerPage);
             return new Result(RequestCodeEnum.OK.getState(), "博客加载成功", lists);
         } catch (Exception e) {
             return new Result(RequestCodeEnum.ERROR.getState(), "博客加载失败", e);

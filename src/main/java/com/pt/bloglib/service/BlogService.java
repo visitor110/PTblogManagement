@@ -14,4 +14,8 @@ public interface BlogService {
     default List<Blog> loadBlogs() {
         return null;
     }
+
+    default List<Blog> loadBlogsByPage(Integer pageIndex,Integer blogsPerPage ) {
+        return null;
+    }
 }

@@ -11,4 +11,5 @@ import java.util.List;
 public interface BlogDao {
     Integer saveBlog(Blog blog);
     List<Blog> selectBlogs();
+    List<Blog> selectBlogsByPage(Integer startIndex,Integer blogsPerPage);
 }
