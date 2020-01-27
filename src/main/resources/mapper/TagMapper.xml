@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pt.bloglib.dao.TagDao">
+    <resultMap id="Tag" type="Tag">
+        <id property="id" column="tag_id"/>
+        <result property="blogId" column="blog_id"/>
+        <result property="tag" column="tag_name"/>
+    </resultMap>
+
+    <insert id="saveTag" parameterType="java.util.ArrayList">
+        INSERT INTO tag(tag_id,tag_name,blog_id)VALUES
+        <foreach collection="tagList" item="item" index="index" separator=",">
+            (null,#{item},#{blogId})
+        </foreach>
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+</mapper>
