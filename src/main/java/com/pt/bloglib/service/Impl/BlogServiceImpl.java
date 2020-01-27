@@ -11,6 +11,8 @@ import com.pt.bloglib.utils.FormatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -47,6 +49,10 @@ public class BlogServiceImpl implements BlogService {
         Integer startIndex = pageIndex * blogsPerPage;
         List<Blog> blogList = blogDao.selectBlogsByPage(startIndex, blogsPerPage);
 //            System.out.println(this.getClass().getName() + "\t" + blogList);
+        System.out.println("当前时间\t" + LocalDateTime.now());
+        LocalDateTime test = blogList.get(0).getCreateDate();
+        System.out.println(test);
+
         return blogList;
     }
 

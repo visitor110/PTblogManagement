@@ -2,7 +2,7 @@ package com.pt.bloglib.dao.entity;
 
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 public class Blog {
@@ -11,7 +11,7 @@ public class Blog {
     private String content;
     private Integer watchedNum;
     private Integer commentNum;
-    private Date createDate;
+    private LocalDateTime createDate;
     private Integer state;
     private Integer userId;
 }
