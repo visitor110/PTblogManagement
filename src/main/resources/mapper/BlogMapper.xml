@@ -14,11 +14,6 @@
         <result property="createDate" column="blog_time"/>
         <result property="state" column="blog_state"/>
         <result property="userId" column="user_id"/>
-        <collection property="tagList" ofType="Tag">
-            <id property="id" column="tag_id"/>
-            <result property="tagName" column="tag_name"/>
-            <result property="blogId" column="blog_id"/>
-        </collection>
     </resultMap>
 
     <insert id="saveBlog" parameterType="Blog">
@@ -29,28 +24,18 @@
         </selectKey>
     </insert>
 
-    <!--<select id="selectBlogs" resultMap="Blog">-->
-    <!--SELECT blog_id,blog_title,blog_body,blog_discussCount,-->
-    <!--blog_blogViews,blog_time,blog_state,user_id-->
-    <!--FROM blog-->
-    <!--</select>-->
-
     <select id="selectBlogsByPage" resultMap="Blog">
         SELECT
-	        b.blog_id,
-	        b.blog_title,
-	        b.blog_body,
-	        b.blog_discussCount,
-	        b.blog_blogViews,
-	        b.blog_time,
-	        b.blog_state,
-	        b.user_id,
-	        t.tag_name,
-			t.tag_id
+	        blog_id,
+	        blog_title,
+	        blog_body,
+	        blog_discussCount,
+	        blog_blogViews,
+	        blog_time,
+	        blog_state,
+	        user_id
         FROM
-        	blog as b
-        JOIN  tag as t
-        ON b.blog_id = t.blog_id
+        	blog
         ORDER BY
         	blog_blogViews
         LIMIT #{blogsPerPage} OFFSET #{startIndex}

@@ -3,10 +3,12 @@ package com.pt.bloglib.controller;
 import com.pt.bloglib.Exception.BlogIsNullException;
 import com.pt.bloglib.Exception.BlogSaveException;
 import com.pt.bloglib.dao.entity.Blog;
+import com.pt.bloglib.dao.entity.Tag;
 import com.pt.bloglib.dao.pojo.ReceiveBlog;
 import com.pt.bloglib.dto.Result;
 import com.pt.bloglib.enums.RequestCodeEnum;
 import com.pt.bloglib.service.BlogService;
+import com.pt.bloglib.service.TagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import java.util.List;
 public class BlogController {
 
     private BlogService blogService;
+    private TagService tagService;
 
     @ApiOperation(value = "主页加载博客")
     @RequestMapping("/blogList")
@@ -27,6 +30,10 @@ public class BlogController {
     public Result getBlogList(Integer pageIndex, Integer blogsPerPage) {
         try {
             List<Blog> lists = blogService.loadBlogsByPage(pageIndex, blogsPerPage);
+            lists.forEach(blog -> {
+                List<Tag> tagList = tagService.selectTagsByBlogId(blog.getId());
+                blog.setTagList(tagList);
+            });
             return new Result(RequestCodeEnum.OK.getState(), "博客加载成功", lists);
         } catch (Exception e) {
             return new Result(RequestCodeEnum.ERROR.getState(), "博客加载失败", e);
@@ -51,5 +58,10 @@ public class BlogController {
     @Autowired
     public void setBlogService(BlogService blogService) {
         this.blogService = blogService;
+    }
+
+    @Autowired
+    public void setTagService(TagService tagService) {
+        this.tagService = tagService;
     }
 }

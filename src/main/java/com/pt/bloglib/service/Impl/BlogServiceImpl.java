@@ -3,16 +3,15 @@ package com.pt.bloglib.service.Impl;
 import com.pt.bloglib.Exception.BlogIsNullException;
 import com.pt.bloglib.Exception.BlogSaveException;
 import com.pt.bloglib.dao.BlogDao;
-import com.pt.bloglib.dao.TagDao;
 import com.pt.bloglib.dao.entity.Blog;
 import com.pt.bloglib.dao.pojo.ReceiveBlog;
 import com.pt.bloglib.service.BlogService;
+import com.pt.bloglib.service.TagService;
 import com.pt.bloglib.utils.FormatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,10 +19,11 @@ public class BlogServiceImpl implements BlogService {
 
     private Blog blog;
     private BlogDao blogDao;
-    private TagDao tagDao;
+    private TagService tagService;
 
     @Override
     @Transactional
+
     public void saveBlog(ReceiveBlog receiveBlog) throws BlogIsNullException, BlogSaveException {
         if (FormatUtil.checkStringIsNull(receiveBlog.getTitle(), receiveBlog.getBlog()))
             throw new BlogIsNullException("标题或内容不能为空");
@@ -37,7 +37,7 @@ public class BlogServiceImpl implements BlogService {
         if (blogResult == 0) {
             throw new BlogSaveException("博客存储失败");
         }
-        int tagResult = tagDao.saveTag(receiveBlog.getTagList(), blog.getId());
+        int tagResult = tagService.saveTags(receiveBlog.getTagList(), blog.getId());
         if (tagResult == 0) {
             throw new BlogSaveException("tag存储失败");
         }
@@ -68,7 +68,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Autowired
-    public void setTagDao(TagDao tagDao) {
-        this.tagDao = tagDao;
+    public void setTagService(TagService tagService) {
+        this.tagService = tagService;
     }
 }

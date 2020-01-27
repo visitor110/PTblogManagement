@@ -6,8 +6,8 @@
 <mapper namespace="com.pt.bloglib.dao.TagDao">
     <resultMap id="Tag" type="Tag">
         <id property="id" column="tag_id"/>
+        <result property="tagName" column="tag_name"/>
         <result property="blogId" column="blog_id"/>
-        <result property="tag" column="tag_name"/>
     </resultMap>
 
     <insert id="saveTag" parameterType="java.util.ArrayList">
@@ -19,5 +19,11 @@
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
+
+    <select id="selectTagsByBlogId" resultMap="Tag">
+        select t.tag_id,t.tag_name,t.blog_id
+        from tag as t
+        where t.blog_id = #{blogId}
+    </select>
 
 </mapper>
