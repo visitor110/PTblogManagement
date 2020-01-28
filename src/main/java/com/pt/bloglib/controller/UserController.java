@@ -7,6 +7,7 @@ import com.pt.bloglib.dao.pojo.RegisterUser;
 import com.pt.bloglib.dto.Result;
 import com.pt.bloglib.enums.RequestCodeEnum;
 import com.pt.bloglib.enums.RequestStatusEnum;
+import com.pt.bloglib.service.MailService;
 import com.pt.bloglib.service.UserService;
 import com.pt.bloglib.utils.FormatUtil;
 import io.swagger.annotations.Api;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private UserService userService;
+    private MailService mailService;
 
     @ApiOperation(value = "用户登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -59,9 +61,23 @@ public class UserController {
         return new Result(RequestCodeEnum.OK.getState(), "注册成功", null);
     }
 
+    @ApiOperation(value = "用户邮箱注册验证码")
+    @RequestMapping(value = "/mailVerifyCode", method = RequestMethod.POST)
+    @CrossOrigin
+    @ResponseBody
+    public Result sendMailVerifyCode(@RequestParam("mail") String toMail) {
+        System.out.println(toMail);
+        mailService.sendVerifyCode(toMail);
+        return null;
+    }
+
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
 
+    @Autowired
+    public void setMailService(MailService mailService) {
+        this.mailService = mailService;
+    }
 }
