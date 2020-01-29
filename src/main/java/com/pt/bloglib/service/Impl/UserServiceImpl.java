@@ -1,15 +1,19 @@
 package com.pt.bloglib.service.Impl;
 
 import com.pt.bloglib.Exception.UserExistsException;
+import com.pt.bloglib.Exception.UsernameOrVerifyCodeException;
 import com.pt.bloglib.dao.UserDao;
 import com.pt.bloglib.dao.entity.User;
 import com.pt.bloglib.dao.pojo.RegisterUser;
 import com.pt.bloglib.security.utils.UserPasswordEncoder;
 import com.pt.bloglib.service.UserService;
 import com.pt.bloglib.utils.FormatUtil;
+import com.pt.bloglib.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -17,6 +21,9 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     private User user;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     @Bean
     public UserPasswordEncoder getEncoder() {
@@ -45,7 +52,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(RegisterUser registerUser) throws UserExistsException {
+    public void register(RegisterUser registerUser) throws UserExistsException, UsernameOrVerifyCodeException {
+        String username = registerUser.getUsername();
+        String verifyCode = registerUser.getVerifyCode().toUpperCase();
+        if (!redisUtil.hasKey(username + verifyCode))
+            throw new UsernameOrVerifyCodeException("验证码错误");
         user.setUsername(registerUser.getUsername());
         User foundUser = userDao.findUserByName(user.getUsername());
         if (!FormatUtil.checkClassIsNull(foundUser))

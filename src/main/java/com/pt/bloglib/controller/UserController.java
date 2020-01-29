@@ -65,10 +65,15 @@ public class UserController {
     @RequestMapping(value = "/mailVerifyCode", method = RequestMethod.POST)
     @CrossOrigin
     @ResponseBody
-    public Result sendMailVerifyCode(@RequestParam("mail") String toMail) {
-        System.out.println(toMail);
-        mailService.sendVerifyCode(toMail);
-        return null;
+    public Result sendMailVerifyCode(@RequestParam("mail") String toMail,
+                                     @RequestParam("username") String username) {
+        try {
+            mailService.sendVerifyCode(toMail, username);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(RequestCodeEnum.ERROR.getState(), "邮件发送失败", e);
+        }
+        return new Result(RequestCodeEnum.OK.getState(), "邮件发送成功", null);
     }
 
     @Autowired

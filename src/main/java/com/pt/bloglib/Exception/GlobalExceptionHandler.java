@@ -1,6 +1,8 @@
 package com.pt.bloglib.Exception;
 
 import com.pt.bloglib.dto.ExceptionMsg;
+import com.pt.bloglib.dto.Result;
+import com.pt.bloglib.enums.RequestCodeEnum;
 import com.pt.bloglib.enums.RequestStatusEnum;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,6 +20,18 @@ public class GlobalExceptionHandler {
         e.printStackTrace();
         return ExceptionMsg.createExceptionMsg(RequestStatusEnum.ERROR.getState(), RequestStatusEnum.ERROR.getMessage());
     }
+
+    /**
+     * 注册验证码错误
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(UsernameOrVerifyCodeException.class)
+    public Result UsernameOrVerifyCodeExceptionHandler(Exception e) {
+        e.printStackTrace();
+        return new Result(RequestCodeEnum.ERROR.getState(), e.getMessage(), e);
+    }
+
 
     /**
      * 404 没找到资源
