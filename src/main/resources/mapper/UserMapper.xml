@@ -23,4 +23,10 @@
         INSERT INTO user VALUES (null,#{username},#{password},#{mail},#{state},null)
     </insert>
 
+    <update id="updatePassword" parameterType="String">
+        UPDATE user
+        SET user_password = #{password}
+        WHERE user_name = #{username}
+    </update>
+
 </mapper>

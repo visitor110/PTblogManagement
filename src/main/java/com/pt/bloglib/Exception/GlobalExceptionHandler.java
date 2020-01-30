@@ -23,6 +23,7 @@ public class GlobalExceptionHandler {
 
     /**
      * 注册验证码错误
+     *
      * @param e
      * @return
      */
@@ -32,6 +33,32 @@ public class GlobalExceptionHandler {
         return new Result(RequestCodeEnum.ERROR.getState(), e.getMessage(), e);
     }
 
+    /**
+     * 用户名已存在
+     */
+    @ExceptionHandler(UserExistsException.class)
+    public Result UserExistsExceptionHandler(Exception e) {
+        e.printStackTrace();
+        return new Result(RequestCodeEnum.ERROR.getState(), e.getMessage(), e);
+    }
+
+    /**
+     * 该用户名不存在
+     */
+    @ExceptionHandler(UserNoFoundException.class)
+    public Result UserNoFoundExceptionHandler(Exception e) {
+        e.printStackTrace();
+        return new Result(RequestCodeEnum.ERROR.getState(), e.getMessage(), e);
+    }
+
+    /**
+     * 更新密码失败
+     */
+    @ExceptionHandler(ChangePasswordException.class)
+    public Result ChangePasswordExceptionHandler(Exception e) {
+        e.printStackTrace();
+        return new Result(RequestCodeEnum.ERROR.getState(), e.getMessage(), e);
+    }
 
     /**
      * 404 没找到资源

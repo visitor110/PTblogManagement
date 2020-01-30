@@ -12,4 +12,6 @@ public interface UserDao {
     User findUserByName(@Param("username") String name);
 
     void addUser(User user);
+    Integer updatePassword(@Param("username")String username,
+                        @Param("password")String password);
 }

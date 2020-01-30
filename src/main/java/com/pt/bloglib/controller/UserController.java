@@ -1,27 +1,30 @@
 package com.pt.bloglib.controller;
 
-import com.pt.bloglib.Exception.UserExistsException;
 import com.pt.bloglib.dao.entity.User;
+import com.pt.bloglib.dao.pojo.ChangePasswordUser;
 import com.pt.bloglib.dao.pojo.LoginUser;
 import com.pt.bloglib.dao.pojo.RegisterUser;
 import com.pt.bloglib.dto.Result;
 import com.pt.bloglib.enums.RequestCodeEnum;
 import com.pt.bloglib.enums.RequestStatusEnum;
-import com.pt.bloglib.service.MailService;
+import com.pt.bloglib.service.Impl.MailServiceStrategy;
 import com.pt.bloglib.service.UserService;
 import com.pt.bloglib.utils.FormatUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 @RestController
 @Api
 @RequestMapping(value = "/user")
 public class UserController {
 
+    @Resource
     private UserService userService;
-    private MailService mailService;
+    @Resource
+    private MailServiceStrategy mailServiceStrategy;
 
     @ApiOperation(value = "用户登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -53,22 +56,21 @@ public class UserController {
         }
         try {
             userService.register(userData);
-        } catch (UserExistsException e) {
-            return new Result(RequestCodeEnum.ERROR.getState(), "用户名已存在", e);
         } catch (Exception e) {
             return new Result(RequestCodeEnum.ERROR.getState(), "注册失败", e);
         }
         return new Result(RequestCodeEnum.OK.getState(), "注册成功", null);
     }
 
-    @ApiOperation(value = "用户邮箱注册验证码")
+    @ApiOperation(value = "发送验证码至邮箱")
     @RequestMapping(value = "/mailVerifyCode", method = RequestMethod.POST)
     @CrossOrigin
     @ResponseBody
     public Result sendMailVerifyCode(@RequestParam("mail") String toMail,
-                                     @RequestParam("username") String username) {
+                                     @RequestParam("username") String username,
+                                     @RequestParam("strategy") String strategy) {
         try {
-            mailService.sendVerifyCode(toMail, username);
+            mailServiceStrategy.getMailServiceImpl(strategy).sendVerifyCode(toMail, username);
         } catch (Exception e) {
             e.printStackTrace();
             return new Result(RequestCodeEnum.ERROR.getState(), "邮件发送失败", e);
@@ -76,13 +78,18 @@ public class UserController {
         return new Result(RequestCodeEnum.OK.getState(), "邮件发送成功", null);
     }
 
-    @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    @ApiOperation(value = "通过邮箱更改密码")
+    @RequestMapping(value = "/changePasswordByMail", method = RequestMethod.POST)
+    @CrossOrigin
+    @ResponseBody
+    public Result changePasswordByMail(ChangePasswordUser userData) {
+        try {
+            userService.changePassword(userData);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(RequestCodeEnum.ERROR.getState(), "邮件发送失败", e);
+        }
+        return new Result(RequestCodeEnum.OK.getState(), "邮件发送成功", null);
     }
 
-    @Autowired
-    public void setMailService(MailService mailService) {
-        this.mailService = mailService;
-    }
 }

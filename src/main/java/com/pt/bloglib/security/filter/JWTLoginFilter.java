@@ -59,7 +59,7 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
         } catch (Exception e) {
             logger.error("request 中提取 LoginUser 失败\t", e);
             e.printStackTrace();
-            Result result = new Result(RequestCodeEnum.ERROR.getState(), "用户不存在", e);
+            Result result = new Result(RequestCodeEnum.ERROR.getState(), "用户不存在或密码错误", e);
             try {
                 response = addResultToResponse(response, result);
             } catch (IOException e1) {
