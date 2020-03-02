@@ -11,7 +11,7 @@ public interface BlogService {
     default void saveBlog(ReceiveBlog receiveBlog) throws BlogIsNullException, BlogSaveException {
     }
 
-    default List<Blog> loadBlogs() {
+    default Blog loadBlogById(Integer blogId) {
         return null;
     }
 

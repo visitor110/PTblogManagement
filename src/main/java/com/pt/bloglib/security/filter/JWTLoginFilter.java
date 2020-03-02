@@ -3,11 +3,12 @@ package com.pt.bloglib.security.filter;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pt.bloglib.dao.pojo.LoginUser;
+import com.pt.bloglib.dao.pojo.UserInfo;
 import com.pt.bloglib.dto.Result;
 import com.pt.bloglib.enums.RequestCodeEnum;
 import com.pt.bloglib.security.entity.JwtUser;
 import com.pt.bloglib.security.utils.JwtUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.pt.bloglib.utils.RedisUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,11 +35,18 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
 
-    @Autowired
+    private RedisUtil redisUtil;
+
+    private UserInfo userInfo;
+
     private LoginUser loginUser;
 
-    public JWTLoginFilter(AuthenticationManager authenticationManager) {
+    public JWTLoginFilter(AuthenticationManager authenticationManager,
+                          UserInfo userInfo,
+                          RedisUtil redisUtil) {
         this.authenticationManager = authenticationManager;
+        this.userInfo = userInfo;
+        this.redisUtil = redisUtil;
         // 设置URL，以确定是否需要身份验证
         super.setFilterProcessesUrl("/user/login");
     }
@@ -87,8 +95,16 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
         String token = JwtUtil.createToken(jwtUser.getUsername(), roles, rememberMe.get());
         // Http Response Header 中返回 Token
         response.setHeader(JwtUtil.TOKEN_HEADER, token);
+
+        //保存一周
+        userInfo.setUserId(jwtUser.getId());
+        userInfo.setUserName(jwtUser.getUsername());
+        userInfo.setRoles(roles);
+        userInfo.setImgAddress("");
+        redisUtil.set(token, userInfo, 60 * 24 * 7);
+
         System.out.println(jwtUser);
-        Result result = new Result(RequestCodeEnum.OK.getState(), "登陆成功", jwtUser.getId());
+        Result result = new Result(RequestCodeEnum.OK.getState(), "登陆成功", userInfo);
         response = addResultToResponse(response, result);
     }
 
@@ -110,5 +126,4 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
         response.getWriter().flush();
         return response;
     }
-
 }

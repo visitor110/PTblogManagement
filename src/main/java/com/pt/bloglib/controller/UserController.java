@@ -1,9 +1,9 @@
 package com.pt.bloglib.controller;
 
-import com.pt.bloglib.dao.entity.User;
+import com.pt.bloglib.Exception.NoSuchUserInfoException;
 import com.pt.bloglib.dao.pojo.ChangePasswordUser;
-import com.pt.bloglib.dao.pojo.LoginUser;
 import com.pt.bloglib.dao.pojo.RegisterUser;
+import com.pt.bloglib.dao.pojo.UserInfo;
 import com.pt.bloglib.dto.Result;
 import com.pt.bloglib.enums.RequestCodeEnum;
 import com.pt.bloglib.enums.RequestStatusEnum;
@@ -26,24 +26,35 @@ public class UserController {
     @Resource
     private MailServiceStrategy mailServiceStrategy;
 
-    @ApiOperation(value = "用户登录")
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+//    @ApiOperation(value = "用户登录")
+//    @RequestMapping(value = "/login", method = RequestMethod.POST)
+//    @CrossOrigin
+//    @ResponseBody
+//    public Result doLogin(LoginUser userData) {
+//        System.out.println("doLogin\t" + userData.toString());
+//        User user = null;
+//        try {
+//            user = userService.login(userData.getUsername(), userData.getPassword());
+//            System.out.println("login result:\t" + user.toString());
+//        } catch (NullPointerException e) {
+//            return new Result(RequestStatusEnum.LOGINERROR.getState(),
+//                    "数据为空", e);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return new Result(RequestStatusEnum.OK.getState(), "登陆成功", null);
+//    }
+
+    @ApiOperation(value = "获取用户信息")
+    @RequestMapping(value = "/getUserInfoByToken", method = RequestMethod.POST)
     @CrossOrigin
     @ResponseBody
-    public Result doLogin(LoginUser userData) {
-        System.out.println("doLogin\t" + userData.toString());
-        User user = null;
-        try {
-            user = userService.login(userData.getUsername(), userData.getPassword());
-            System.out.println("login result:\t" + user.toString());
-        } catch (NullPointerException e) {
-            return new Result(RequestStatusEnum.LOGINERROR.getState(),
-                    "数据为空", e);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new Result(RequestStatusEnum.OK.getState(), "登陆成功", null);
+    public Result getRoles(@RequestParam("token")String token) throws NoSuchUserInfoException {
+        UserInfo info = userService.getUserInfoByToken(token);
+        System.out.println("getinfo\t" + info);
+        return new Result(RequestStatusEnum.OK.getState(), "用户信息获取成功", info);
     }
+
 
     @ApiOperation(value = "用户注册")
     @RequestMapping(value = "/register", method = RequestMethod.POST)

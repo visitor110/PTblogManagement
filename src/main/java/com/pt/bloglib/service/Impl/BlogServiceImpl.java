@@ -44,17 +44,15 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public List<Blog> loadBlogs() {
-        List<Blog> blogList = blogDao.selectBlogs();
+    public List<Blog> loadBlogsByPage(Integer pageIndex, Integer blogsPerPage) {
+        Integer startIndex = pageIndex * blogsPerPage;
+        List<Blog> blogList = blogDao.selectBlogsByPage(startIndex, blogsPerPage);
         return blogList;
     }
 
     @Override
-    public List<Blog> loadBlogsByPage(Integer pageIndex, Integer blogsPerPage) {
-        Integer startIndex = pageIndex * blogsPerPage;
-        List<Blog> blogList = blogDao.selectBlogsByPage(startIndex, blogsPerPage);
-        System.out.println("blogList" + blogList);
-        return blogList;
+    public Blog loadBlogById(Integer blogId) {
+        return blogDao.selectBlogById(blogId);
     }
 
     @Autowired

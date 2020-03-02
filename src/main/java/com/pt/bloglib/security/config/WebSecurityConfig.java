@@ -1,11 +1,13 @@
 package com.pt.bloglib.security.config;
 
+import com.pt.bloglib.dao.pojo.UserInfo;
 import com.pt.bloglib.security.Exception.JWTAccessDeniedHandler;
 import com.pt.bloglib.security.Exception.JWTAuthenticationEntryPoint;
 import com.pt.bloglib.security.filter.JWTAuthorizationFilter;
 import com.pt.bloglib.security.filter.JWTLoginFilter;
 import com.pt.bloglib.security.service.UserDetailsServiceImpl;
 import com.pt.bloglib.security.utils.UserPasswordEncoder;
+import com.pt.bloglib.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +22,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.annotation.Resource;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -27,6 +31,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsServiceImpl userDetailsServiceImpl;
+
+    @Resource
+    private RedisUtil redisUtil;
+
+    @Resource
+    private UserInfo userInfo;
 
     public PasswordEncoder passwordEncoder() {
         return new UserPasswordEncoder();
@@ -56,7 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 //加入自定义filter
-                .addFilter(new JWTLoginFilter(authenticationManager()))
+                .addFilter(new JWTLoginFilter(authenticationManager(), userInfo, redisUtil))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager()))
                 // 不需要session（不创建会话）
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()

@@ -40,14 +40,29 @@ public class BlogController {
         }
     }
 
+    /**
+     * 动态加载博客
+     *
+     * @param blogId
+     * @return
+     */
+    @ApiOperation(value = "动态加载博客")
+    @RequestMapping(value = "/id/{blogId}", method = RequestMethod.GET)
+    @ResponseBody
+    public Result getBlogById(@PathVariable String blogId) {
+        Integer id = Integer.parseInt(blogId);
+        Blog blog = blogService.loadBlogById(id);
+        return new Result(RequestCodeEnum.OK.getState(), "收到", blog);
+    }
+
     @ApiOperation(value = "发表博客")
     @RequestMapping(value = "/createBlog", method = RequestMethod.POST)
     @CrossOrigin
     @ResponseBody
     public Result createBlog(ReceiveBlog receiveBlog) {
-        try{
+        try {
             blogService.saveBlog(receiveBlog);
-        }catch (BlogIsNullException e){
+        } catch (BlogIsNullException e) {
             return new Result(RequestCodeEnum.ERROR.getState(), e.getMessage(), e);
         } catch (BlogSaveException e) {
             return new Result(RequestCodeEnum.ERROR.getState(), e.getMessage(), e);

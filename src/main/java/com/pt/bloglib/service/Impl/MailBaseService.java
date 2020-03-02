@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 @Service
-public class BaseMailService implements MailService {
+public class MailBaseService implements MailService {
 
     protected final int EXPIRE_TIME = 5 * 60;
 

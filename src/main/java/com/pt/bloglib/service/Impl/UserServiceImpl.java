@@ -1,13 +1,11 @@
 package com.pt.bloglib.service.Impl;
 
-import com.pt.bloglib.Exception.ChangePasswordException;
-import com.pt.bloglib.Exception.UserExistsException;
-import com.pt.bloglib.Exception.UserNoFoundException;
-import com.pt.bloglib.Exception.UsernameOrVerifyCodeException;
+import com.pt.bloglib.Exception.*;
 import com.pt.bloglib.dao.UserDao;
 import com.pt.bloglib.dao.entity.User;
 import com.pt.bloglib.dao.pojo.ChangePasswordUser;
 import com.pt.bloglib.dao.pojo.RegisterUser;
+import com.pt.bloglib.dao.pojo.UserInfo;
 import com.pt.bloglib.security.utils.UserPasswordEncoder;
 import com.pt.bloglib.service.UserService;
 import com.pt.bloglib.utils.FormatUtil;
@@ -36,16 +34,28 @@ public class UserServiceImpl implements UserService {
     private UserPasswordEncoder encoder;
 
     //delete
+//    @Override
+//    public User login(String name, String password) {
+//        User user = userDao.findUserByName(name);
+//        if (user != null && encoder.matches(password, user.getPassword())) {
+//            System.out.println("com.pt.bloglib.service.Impl.UserServiceImpl suceess\t"
+//                    + user.getPassword() + " " + password);
+//            return user;
+//        }
+//        System.out.println("com.pt.bloglib.service.Impl.UserServiceImpl fail\t");
+//        return null;
+//    }
+
+
     @Override
-    public User login(String name, String password) {
-        User user = userDao.findUserByName(name);
-        if (user != null && encoder.matches(password, user.getPassword())) {
-            System.out.println("com.pt.bloglib.service.Impl.UserServiceImpl suceess\t"
-                    + user.getPassword() + " " + password);
-            return user;
+    public UserInfo getUserInfoByToken(String token) throws NoSuchUserInfoException {
+        Object o = redisUtil.get(token);
+        UserInfo info = (UserInfo) redisUtil.get(token);
+
+        if (FormatUtil.checkClassIsNull(info)) {
+            throw new NoSuchUserInfoException("redis中没有token");
         }
-        System.out.println("com.pt.bloglib.service.Impl.UserServiceImpl fail\t");
-        return null;
+        return info;
     }
 
     @Override

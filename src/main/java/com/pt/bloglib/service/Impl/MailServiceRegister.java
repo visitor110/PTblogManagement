@@ -7,7 +7,7 @@ import com.pt.bloglib.utils.VerifyCodeUtil;
 import org.springframework.stereotype.Service;
 
 @Service("register")
-public class MailServiceRegister extends BaseMailService {
+public class MailServiceRegister extends MailBaseService {
 
     @Override
     public void sendVerifyCode(String toMail, String username) throws Exception {

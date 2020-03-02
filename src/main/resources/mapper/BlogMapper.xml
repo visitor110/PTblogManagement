@@ -40,4 +40,20 @@
         	blog_blogViews
         LIMIT #{blogsPerPage} OFFSET #{startIndex}
     </select>
+
+    <select id="selectBlogById" resultMap="Blog">
+        SELECT
+	        blog_id,
+	        blog_title,
+	        blog_body,
+	        blog_discussCount,
+	        blog_blogViews,
+	        blog_time,
+	        blog_state,
+	        user_id
+        FROM
+        	blog
+        WHERE
+          blog.blog_id = #{blogId}
+    </select>
 </mapper>

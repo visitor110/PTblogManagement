@@ -61,6 +61,25 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * String转int
+     */
+    @ExceptionHandler(NumberFormatException.class)
+    public Result NumberFormatExceptionHandler(Exception e) {
+        e.printStackTrace();
+        return new Result(RequestCodeEnum.ERROR.getState(),"文章id格式错误", e);
+    }
+
+
+    /**
+     * String转int
+     */
+    @ExceptionHandler(NoSuchUserInfoException.class)
+    public Result NoSuchUserInfoExceptionHandler(Exception e) {
+        e.printStackTrace();
+        return new Result(RequestCodeEnum.ERROR.getState(),"token错误或已过时", e);
+    }
+
+    /**
      * 404 没找到资源
      */
     @ExceptionHandler(NoHandlerFoundException.class)

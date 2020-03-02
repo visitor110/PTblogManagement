@@ -10,6 +10,6 @@ import java.util.List;
 @Mapper
 public interface BlogDao {
     Integer saveBlog(Blog blog);
-    List<Blog> selectBlogs();
     List<Blog> selectBlogsByPage(Integer startIndex,Integer blogsPerPage);
+    Blog selectBlogById(Integer blogId);
 }
