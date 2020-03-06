@@ -1,8 +1,9 @@
 package com.pt.bloglib.config;
 
 import com.pt.bloglib.dao.entity.Blog;
+import com.pt.bloglib.dao.entity.Discuss;
 import com.pt.bloglib.dao.entity.User;
-import com.pt.bloglib.dao.pojo.UserInfo;
+import com.pt.bloglib.dao.pojo.UserInfoPojo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,13 @@ public class JavaBeanRegister {
     }
 
     @Bean
-    public UserInfo getUserInfo() {
-        return new UserInfo();
+    public Discuss getDiscuss() {
+        return new Discuss();
+    }
+
+
+    @Bean
+    public UserInfoPojo getUserInfo() {
+        return new UserInfoPojo();
     }
 }

@@ -2,8 +2,8 @@ package com.pt.bloglib.security.filter;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pt.bloglib.dao.pojo.LoginUser;
-import com.pt.bloglib.dao.pojo.UserInfo;
+import com.pt.bloglib.dao.pojo.LoginUserPojo;
+import com.pt.bloglib.dao.pojo.UserInfoPojo;
 import com.pt.bloglib.dto.Result;
 import com.pt.bloglib.enums.RequestCodeEnum;
 import com.pt.bloglib.security.entity.JwtUser;
@@ -37,15 +37,15 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private RedisUtil redisUtil;
 
-    private UserInfo userInfo;
+    private UserInfoPojo userInfoPojo;
 
-    private LoginUser loginUser;
+    private LoginUserPojo loginUserPojo;
 
     public JWTLoginFilter(AuthenticationManager authenticationManager,
-                          UserInfo userInfo,
+                          UserInfoPojo userInfoPojo,
                           RedisUtil redisUtil) {
         this.authenticationManager = authenticationManager;
-        this.userInfo = userInfo;
+        this.userInfoPojo = userInfoPojo;
         this.redisUtil = redisUtil;
         // 设置URL，以确定是否需要身份验证
         super.setFilterProcessesUrl("/user/login");
@@ -58,14 +58,14 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             // 从输入流中获取到登录的信息
-            loginUser = objectMapper.readValue(request.getInputStream(), LoginUser.class);
-            rememberMe.set(loginUser.getRemember());
-            System.out.println("loginUser\t" + loginUser);
+            loginUserPojo = objectMapper.readValue(request.getInputStream(), LoginUserPojo.class);
+            rememberMe.set(loginUserPojo.getRemember());
+            System.out.println("loginUserPojo\t" + loginUserPojo);
             UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
-                    loginUser.getUsername(), loginUser.getPassword());
+                    loginUserPojo.getUsername(), loginUserPojo.getPassword());
             return authenticationManager.authenticate(authRequest);
         } catch (Exception e) {
-            logger.error("request 中提取 LoginUser 失败\t", e);
+            logger.error("request 中提取 LoginUserPojo 失败\t", e);
             e.printStackTrace();
             Result result = new Result(RequestCodeEnum.ERROR.getState(), "用户不存在或密码错误", e);
             try {
@@ -97,14 +97,14 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setHeader(JwtUtil.TOKEN_HEADER, token);
 
         //保存一周
-        userInfo.setUserId(jwtUser.getId());
-        userInfo.setUserName(jwtUser.getUsername());
-        userInfo.setRoles(roles);
-        userInfo.setImgAddress("");
-        redisUtil.set(token, userInfo, 60 * 24 * 7);
+        userInfoPojo.setUserId(jwtUser.getId());
+        userInfoPojo.setUserName(jwtUser.getUsername());
+        userInfoPojo.setRoles(roles);
+        userInfoPojo.setImgAddress("");
+        redisUtil.set(token, userInfoPojo, 60 * 24 * 7);
 
         System.out.println(jwtUser);
-        Result result = new Result(RequestCodeEnum.OK.getState(), "登陆成功", userInfo);
+        Result result = new Result(RequestCodeEnum.OK.getState(), "登陆成功", userInfoPojo);
         response = addResultToResponse(response, result);
     }
 

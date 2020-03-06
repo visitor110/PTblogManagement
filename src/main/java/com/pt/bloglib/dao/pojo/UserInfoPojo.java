@@ -8,7 +8,7 @@ import java.util.List;
  * 由于存放用户相关的信息
  */
 @Data
-public class UserInfo {
+public class UserInfoPojo {
     private Integer userId;
     private String userName;
     private String imgAddress;

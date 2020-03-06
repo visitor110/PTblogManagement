@@ -6,7 +6,7 @@ import lombok.Data;
  * 接收前端注册时传来的用户数据
  */
 @Data
-public class RegisterUser {
+public class RegisterUserPojo {
 
     private String username;
     private String password;

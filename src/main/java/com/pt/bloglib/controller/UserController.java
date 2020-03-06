@@ -1,9 +1,9 @@
 package com.pt.bloglib.controller;
 
 import com.pt.bloglib.Exception.NoSuchUserInfoException;
-import com.pt.bloglib.dao.pojo.ChangePasswordUser;
-import com.pt.bloglib.dao.pojo.RegisterUser;
-import com.pt.bloglib.dao.pojo.UserInfo;
+import com.pt.bloglib.dao.pojo.ChangePasswordUserPojoPojo;
+import com.pt.bloglib.dao.pojo.RegisterUserPojo;
+import com.pt.bloglib.dao.pojo.UserInfoPojo;
 import com.pt.bloglib.dto.Result;
 import com.pt.bloglib.enums.RequestCodeEnum;
 import com.pt.bloglib.enums.RequestStatusEnum;
@@ -30,7 +30,7 @@ public class UserController {
 //    @RequestMapping(value = "/login", method = RequestMethod.POST)
 //    @CrossOrigin
 //    @ResponseBody
-//    public Result doLogin(LoginUser userData) {
+//    public Result doLogin(LoginUserPojo userData) {
 //        System.out.println("doLogin\t" + userData.toString());
 //        User user = null;
 //        try {
@@ -50,7 +50,7 @@ public class UserController {
     @CrossOrigin
     @ResponseBody
     public Result getRoles(@RequestParam("token")String token) throws NoSuchUserInfoException {
-        UserInfo info = userService.getUserInfoByToken(token);
+        UserInfoPojo info = userService.getUserInfoByToken(token);
         System.out.println("getinfo\t" + info);
         return new Result(RequestStatusEnum.OK.getState(), "用户信息获取成功", info);
     }
@@ -60,7 +60,7 @@ public class UserController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     @CrossOrigin
     @ResponseBody
-    public Result doRegister(RegisterUser userData) {
+    public Result doRegister(RegisterUserPojo userData) {
         System.out.println("doRegister\t" + userData.toString());
         if (FormatUtil.checkClassIsNull(userData)) {
             return new Result(RequestCodeEnum.ERROR.getState(), "信息不全", "userData is null");
@@ -93,7 +93,7 @@ public class UserController {
     @RequestMapping(value = "/changePasswordByMail", method = RequestMethod.POST)
     @CrossOrigin
     @ResponseBody
-    public Result changePasswordByMail(ChangePasswordUser userData) {
+    public Result changePasswordByMail(ChangePasswordUserPojoPojo userData) {
         try {
             userService.changePassword(userData);
         } catch (Exception e) {

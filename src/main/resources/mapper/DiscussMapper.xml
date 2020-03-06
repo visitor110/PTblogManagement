@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pt.bloglib.dao.DiscussDao">
+    <resultMap id="LoadDiscussPojo" type="com.pt.bloglib.dao.pojo.LoadDiscussPojo">
+        <id property="id" column="discuss_id"/>
+        <result property="username" column="user_name"/>
+        <result property="avatar" column="user_reward"/>
+        <collection property="discuss" javaType="com.pt.bloglib.dao.entity.Discuss">
+            <id property="id" column="discuss_id"/>
+            <result property="content" column="discuss_body"/>
+            <result property="createDate" column="discuss_time"/>
+            <result property="userId" column="user_id"/>
+            <result property="blogId" column="blog_id"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="Discuss" type="Discuss">
+        <id property="id" column="discuss_id"/>
+        <result property="content" column="discuss_body"/>
+        <result property="createDate" column="discuss_time"/>
+        <result property="userId" column="user_id"/>
+        <result property="blogId" column="blog_id"/>
+    </resultMap>
+
+    <insert id="saveDiscuss" parameterType="Discuss">
+        INSERT INTO discuss VALUES (null,#{content},now(),#{userId},#{blogId})
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <select id="selectDiscussByBlogId" parameterType="String" resultMap="LoadDiscussPojo">
+        SELECT
+         d.discuss_id ,
+         d.discuss_body,
+         d.discuss_time,
+         d.user_id,
+         d.blog_id,
+         u.user_id,
+         u.user_name,
+         u.user_reward
+        from discuss as d,user as u
+        WHERE d.blog_id = #{blogId}
+        and d.user_id = u.user_id
+        order by d.discuss_time desc
+    </select>
+
+</mapper>

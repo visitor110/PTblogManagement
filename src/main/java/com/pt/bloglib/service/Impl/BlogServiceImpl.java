@@ -4,7 +4,7 @@ import com.pt.bloglib.Exception.BlogIsNullException;
 import com.pt.bloglib.Exception.BlogSaveException;
 import com.pt.bloglib.dao.BlogDao;
 import com.pt.bloglib.dao.entity.Blog;
-import com.pt.bloglib.dao.pojo.ReceiveBlog;
+import com.pt.bloglib.dao.pojo.ReceiveBlogPojo;
 import com.pt.bloglib.service.BlogService;
 import com.pt.bloglib.service.TagService;
 import com.pt.bloglib.utils.FormatUtil;
@@ -24,12 +24,12 @@ public class BlogServiceImpl implements BlogService {
     @Override
     @Transactional
 
-    public void saveBlog(ReceiveBlog receiveBlog) throws BlogIsNullException, BlogSaveException {
-        if (FormatUtil.checkStringIsNull(receiveBlog.getTitle(), receiveBlog.getBlog()))
+    public void saveBlog(ReceiveBlogPojo receiveBlogPojo) throws BlogIsNullException, BlogSaveException {
+        if (FormatUtil.checkStringIsNull(receiveBlogPojo.getTitle(), receiveBlogPojo.getBlog()))
             throw new BlogIsNullException("标题或内容不能为空");
-        blog.setUserId(receiveBlog.getUserId());
-        blog.setTitle(receiveBlog.getTitle());
-        blog.setContent(receiveBlog.getBlog());
+        blog.setUserId(receiveBlogPojo.getUserId());
+        blog.setTitle(receiveBlogPojo.getTitle());
+        blog.setContent(receiveBlogPojo.getBlog());
         blog.setCommentNum(0);
         blog.setWatchedNum(0);
         blog.setState(1);
@@ -37,7 +37,7 @@ public class BlogServiceImpl implements BlogService {
         if (blogResult == 0) {
             throw new BlogSaveException("博客存储失败");
         }
-        int tagResult = tagService.saveTags(receiveBlog.getTagList(), blog.getId());
+        int tagResult = tagService.saveTags(receiveBlogPojo.getTagList(), blog.getId());
         if (tagResult == 0) {
             throw new BlogSaveException("tag存储失败");
         }

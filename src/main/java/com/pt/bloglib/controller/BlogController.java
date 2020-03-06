@@ -4,7 +4,7 @@ import com.pt.bloglib.Exception.BlogIsNullException;
 import com.pt.bloglib.Exception.BlogSaveException;
 import com.pt.bloglib.dao.entity.Blog;
 import com.pt.bloglib.dao.entity.Tag;
-import com.pt.bloglib.dao.pojo.ReceiveBlog;
+import com.pt.bloglib.dao.pojo.ReceiveBlogPojo;
 import com.pt.bloglib.dto.Result;
 import com.pt.bloglib.enums.RequestCodeEnum;
 import com.pt.bloglib.service.BlogService;
@@ -24,7 +24,7 @@ public class BlogController {
     private BlogService blogService;
     private TagService tagService;
 
-    @ApiOperation(value = "主页加载博客")
+    @ApiOperation(value = "主页加载博客列表")
     @RequestMapping("/blogList")
     @ResponseBody
     public Result getBlogList(Integer pageIndex, Integer blogsPerPage) {
@@ -41,12 +41,12 @@ public class BlogController {
     }
 
     /**
-     * 动态加载博客
+     * 通过ID加载博客
      *
      * @param blogId
      * @return
      */
-    @ApiOperation(value = "动态加载博客")
+    @ApiOperation(value = "通过ID加载博客")
     @RequestMapping(value = "/id/{blogId}", method = RequestMethod.GET)
     @ResponseBody
     public Result getBlogById(@PathVariable String blogId) {
@@ -59,9 +59,9 @@ public class BlogController {
     @RequestMapping(value = "/createBlog", method = RequestMethod.POST)
     @CrossOrigin
     @ResponseBody
-    public Result createBlog(ReceiveBlog receiveBlog) {
+    public Result createBlog(ReceiveBlogPojo receiveBlogPojo) {
         try {
-            blogService.saveBlog(receiveBlog);
+            blogService.saveBlog(receiveBlogPojo);
         } catch (BlogIsNullException e) {
             return new Result(RequestCodeEnum.ERROR.getState(), e.getMessage(), e);
         } catch (BlogSaveException e) {

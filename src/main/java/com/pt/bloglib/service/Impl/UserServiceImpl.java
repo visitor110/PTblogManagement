@@ -3,9 +3,9 @@ package com.pt.bloglib.service.Impl;
 import com.pt.bloglib.Exception.*;
 import com.pt.bloglib.dao.UserDao;
 import com.pt.bloglib.dao.entity.User;
-import com.pt.bloglib.dao.pojo.ChangePasswordUser;
-import com.pt.bloglib.dao.pojo.RegisterUser;
-import com.pt.bloglib.dao.pojo.UserInfo;
+import com.pt.bloglib.dao.pojo.ChangePasswordUserPojoPojo;
+import com.pt.bloglib.dao.pojo.RegisterUserPojo;
+import com.pt.bloglib.dao.pojo.UserInfoPojo;
 import com.pt.bloglib.security.utils.UserPasswordEncoder;
 import com.pt.bloglib.service.UserService;
 import com.pt.bloglib.utils.FormatUtil;
@@ -48,9 +48,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserInfo getUserInfoByToken(String token) throws NoSuchUserInfoException {
+    public UserInfoPojo getUserInfoByToken(String token) throws NoSuchUserInfoException {
         Object o = redisUtil.get(token);
-        UserInfo info = (UserInfo) redisUtil.get(token);
+        UserInfoPojo info = (UserInfoPojo) redisUtil.get(token);
 
         if (FormatUtil.checkClassIsNull(info)) {
             throw new NoSuchUserInfoException("redis中没有token");
@@ -65,36 +65,36 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void register(RegisterUser registerUser) throws UserExistsException, UsernameOrVerifyCodeException {
-        String username = registerUser.getUsername();
-        String verifyCode = registerUser.getVerifyCode().toUpperCase();
+    public void register(RegisterUserPojo registerUserPojo) throws UserExistsException, UsernameOrVerifyCodeException {
+        String username = registerUserPojo.getUsername();
+        String verifyCode = registerUserPojo.getVerifyCode().toUpperCase();
         if (!redisUtil.hasKey(username + verifyCode + "register"))
             throw new UsernameOrVerifyCodeException("验证码错误");
 
-        user.setUsername(registerUser.getUsername());
+        user.setUsername(registerUserPojo.getUsername());
         User foundUser = userDao.findUserByName(user.getUsername());
         if (!FormatUtil.checkClassIsNull(foundUser))
             throw new UserExistsException("用户名已存在");
 
-        user.setPassword(encoder.encode(registerUser.getPassword()));
+        user.setPassword(encoder.encode(registerUserPojo.getPassword()));
         user.setState(2);
-        user.setMail(registerUser.getMail());
+        user.setMail(registerUserPojo.getMail());
         System.out.println("user:\t" + user);
         userDao.addUser(user);
     }
 
     @Override
-    public void changePassword(ChangePasswordUser changePasswordUser) throws
+    public void changePassword(ChangePasswordUserPojoPojo changePasswordUserPojo) throws
             UsernameOrVerifyCodeException, UserNoFoundException, ChangePasswordException {
-        String username = changePasswordUser.getUsername();
-        String verifyCode = changePasswordUser.getVerifyCode().toUpperCase();
+        String username = changePasswordUserPojo.getUsername();
+        String verifyCode = changePasswordUserPojo.getVerifyCode().toUpperCase();
         if (!redisUtil.hasKey(username + verifyCode + "changePassword"))
             throw new UsernameOrVerifyCodeException("验证码错误");
 
         User foundUser = userDao.findUserByName(username);
         if (FormatUtil.checkClassIsNull(foundUser))
             throw new UserNoFoundException("用户名不存在");
-        String password = encoder.encode(changePasswordUser.getPassword());
+        String password = encoder.encode(changePasswordUserPojo.getPassword());
         int result = userDao.updatePassword(username, password);
         if (result != 1) {
             throw new ChangePasswordException("密码更新失败");

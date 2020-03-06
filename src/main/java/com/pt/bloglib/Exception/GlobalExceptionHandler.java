@@ -69,6 +69,15 @@ public class GlobalExceptionHandler {
         return new Result(RequestCodeEnum.ERROR.getState(),"文章id格式错误", e);
     }
 
+    /**
+     * 保存评论失败
+     */
+    @ExceptionHandler(DiscussSaveException.class)
+    public Result DiscussSaveExceptionHandler(Exception e) {
+        e.printStackTrace();
+        return new Result(RequestCodeEnum.ERROR.getState(),"保存评论失败", e);
+    }
+
 
     /**
      * String转int

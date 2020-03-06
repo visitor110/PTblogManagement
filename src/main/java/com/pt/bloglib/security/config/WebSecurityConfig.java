@@ -1,6 +1,6 @@
 package com.pt.bloglib.security.config;
 
-import com.pt.bloglib.dao.pojo.UserInfo;
+import com.pt.bloglib.dao.pojo.UserInfoPojo;
 import com.pt.bloglib.security.Exception.JWTAccessDeniedHandler;
 import com.pt.bloglib.security.Exception.JWTAuthenticationEntryPoint;
 import com.pt.bloglib.security.filter.JWTAuthorizationFilter;
@@ -36,7 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private RedisUtil redisUtil;
 
     @Resource
-    private UserInfo userInfo;
+    private UserInfoPojo userInfoPojo;
 
     public PasswordEncoder passwordEncoder() {
         return new UserPasswordEncoder();
@@ -66,7 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 //加入自定义filter
-                .addFilter(new JWTLoginFilter(authenticationManager(), userInfo, redisUtil))
+                .addFilter(new JWTLoginFilter(authenticationManager(), userInfoPojo, redisUtil))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager()))
                 // 不需要session（不创建会话）
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
