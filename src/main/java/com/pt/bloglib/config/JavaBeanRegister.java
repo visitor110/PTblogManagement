@@ -3,6 +3,7 @@ package com.pt.bloglib.config;
 import com.pt.bloglib.dao.entity.Blog;
 import com.pt.bloglib.dao.entity.Discuss;
 import com.pt.bloglib.dao.entity.User;
+import com.pt.bloglib.dao.pojo.ReplyPojo;
 import com.pt.bloglib.dao.pojo.UserInfoPojo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -27,9 +28,13 @@ public class JavaBeanRegister {
         return new Discuss();
     }
 
-
     @Bean
     public UserInfoPojo getUserInfo() {
         return new UserInfoPojo();
+    }
+
+    @Bean
+    public ReplyPojo getReplyPojo() {
+        return new ReplyPojo();
     }
 }

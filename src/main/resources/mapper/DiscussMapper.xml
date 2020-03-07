@@ -4,6 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.pt.bloglib.dao.DiscussDao">
+
     <resultMap id="LoadDiscussPojo" type="com.pt.bloglib.dao.pojo.LoadDiscussPojo">
         <id property="id" column="discuss_id"/>
         <result property="username" column="user_name"/>
@@ -12,9 +13,24 @@
             <id property="id" column="discuss_id"/>
             <result property="content" column="discuss_body"/>
             <result property="createDate" column="discuss_time"/>
-            <result property="userId" column="user_id"/>
-            <result property="blogId" column="blog_id"/>
         </collection>
+        <collection property="replyPojoList" resultMap="ReplyPojoMap"/>
+    </resultMap>
+
+    <resultMap id="ReplyPojoMap" type="com.pt.bloglib.dao.pojo.ReplyPojo">
+        <id property="replyId" column="reply_id"/>
+        <result property="content" column="reply_body"/>
+        <result property="createDate" column="reply_time"/>
+        <association property="replyUser" javaType="com.pt.bloglib.dao.entity.User">
+            <id property="id" column="r_u_user_id"/>
+            <result property="username" column="r_u_user_name"/>
+            <result property="avatar" column="r_u_user_reward"/>
+        </association>
+        <association property="targetUser" javaType="com.pt.bloglib.dao.entity.User">
+            <id property="id" column="t_u_user_id"/>
+            <result property="username" column="t_u_user_name"/>
+            <result property="avatar" column="t_u_user_reward"/>
+        </association>
     </resultMap>
 
     <resultMap id="Discuss" type="Discuss">
@@ -41,10 +57,24 @@
          d.blog_id,
          u.user_id,
          u.user_name,
-         u.user_reward
-        from discuss as d,user as u
-        WHERE d.blog_id = #{blogId}
-        and d.user_id = u.user_id
+         u.user_reward,
+         r.reply_id,
+         r.reply_body,
+         r.reply_time,
+         r_u.user_id as r_u_user_id,
+         r_u.user_name as r_u_user_name,
+         r_u.user_reward as r_u_user_reward,
+         t_u.user_id as t_u_user_id,
+         t_u.user_name as t_u_user_name,
+         t_u.user_reward as t_u_user_reward
+        FROM
+        discuss AS d
+        INNER JOIN `user` AS u ON d.user_id = u.user_id
+        LEFT JOIN reply AS r ON d.discuss_id = r.discuss_id
+        LEFT JOIN `user` AS r_u ON r.user_id = r_u.user_id
+        LEFT JOIN `user` AS t_u ON r.target_user_id = t_u.user_id
+        WHERE
+	      d.blog_id = #{blogId}
         order by d.discuss_time desc
     </select>
 

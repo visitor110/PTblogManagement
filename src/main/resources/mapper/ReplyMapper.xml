@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pt.bloglib.dao.ReplyDao">
+    <resultMap id="Reply" type="Reply">
+        <id property="replyId" column="reply_id"/>
+        <result property="content" column="reply_body"/>
+        <result property="createDate" column="reply_time"/>
+        <result property="userId" column="user_id"/>
+        <result property="targetUserId" column="target_user_id"/>
+        <result property="discussId" column="discuss_id"/>
+        <result property="rootId" column="reply_rootid"/>
+    </resultMap>
+
+    <insert id="saveReply" parameterType="Reply">
+        INSERT INTO reply VALUES (null,#{content},now(),#{userId},#{targetUserId},#{discussId},#{rootId})
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="replyId">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+</mapper>

@@ -9,4 +9,5 @@ public class User {
     private String password;
     private String mail;
     private Integer state;
+    private String avatar;
 }

@@ -80,6 +80,17 @@ public class GlobalExceptionHandler {
 
 
     /**
+     * 保存回复失败
+     */
+    @ExceptionHandler(ReplySaveException.class)
+    public Result ReplySaveExceptionHandler(Exception e) {
+        e.printStackTrace();
+        return new Result(RequestCodeEnum.ERROR.getState(),"保存回复失败", e);
+    }
+
+
+
+    /**
      * String转int
      */
     @ExceptionHandler(NoSuchUserInfoException.class)
